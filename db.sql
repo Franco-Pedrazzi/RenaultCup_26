@@ -2,6 +2,25 @@ DROP DATABASE IF EXISTS Copa_Renault;
 CREATE DATABASE Copa_Renault;
 USE Copa_Renault;
 
+CREATE TABLE `usuario` (
+  `Nombre` VARCHAR(40) not NULL,
+  `Email` VARCHAR(40) not NULL,
+  `Contraseña` VARCHAR(200) not NULL,
+  `rango`  VARCHAR(20) NULL DEFAULT NULL,
+  PRIMARY KEY (`Email`)
+);
+
+CREATE TABLE `Verificacion` (
+  `id` int not NULL auto_increment,
+  `Email` VARCHAR(40) not NULL,
+  `codigo` VARCHAR(20) not NULL,
+  `contra_codificada`  VARCHAR(200) not null,
+  `nombre` VARCHAR(40) not NULL,
+  `rango` VARCHAR(20) not NULL,
+  PRIMARY KEY (`id`)
+);
+
+
 CREATE TABLE `examples` (
   `id_example` INT AUTO_INCREMENT,
   `nombre` VARCHAR(50) NULL DEFAULT '-',
@@ -69,15 +88,6 @@ CREATE TABLE `Resultado` (
 );
 
 		
-CREATE TABLE `Cuenta_habilitada` (
-  `Nombre` VARCHAR(40) not NULL,
-  `Email` VARCHAR(40) not NULL,
-  `Contraseña` VARCHAR(200) not NULL,
-  `rango`  VARCHAR(20) NULL DEFAULT NULL,
-  PRIMARY KEY (`Email`)
-);
-
-		
 CREATE TABLE `Staff` (
   `id_staff` int AUTO_INCREMENT,
   `Nombre` VARCHAR(40) NULL DEFAULT NULL,
@@ -89,15 +99,6 @@ CREATE TABLE `Staff` (
   PRIMARY KEY (`id_staff`)
 );
 
-CREATE TABLE `Verificacion` (
-  `id` int not NULL auto_increment,
-  `Email` VARCHAR(40) not NULL,
-  `codigo` VARCHAR(20) not NULL,
-  `contra_codificada`  VARCHAR(200) not null,
-  `nombre` VARCHAR(40) not NULL,
-  `rango` VARCHAR(20) not NULL,
-  PRIMARY KEY (`id`)
-);
 
 ALTER TABLE `jugador` ADD FOREIGN KEY (id_equipo) REFERENCES `Equipo` (`id_equipo`);
 ALTER TABLE `Responsable` ADD FOREIGN KEY (id_equipo) REFERENCES `Equipo` (`id_equipo`);
