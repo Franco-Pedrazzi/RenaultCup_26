@@ -53,10 +53,9 @@ class Usuario(UserMixin, db.Model):
     
 
 class Verificacion(db.Model):
-    __tablename__ = 'verificacion'
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    __tablename__ = 'Verificacion'
     email = db.Column(db.String(40))
-    codigo = db.Column(db.String(20))
+    codigo = db.Column(db.String(20), primary_key=True)
     nombre = db.Column(db.String(40))
     contra_codificada = db.Column(db.String(200))
     rango = db.Column(db.String(20))
@@ -85,7 +84,7 @@ def signup():
     nombre = data.get("Nombre")
     email = data.get("Email")
     contraseña = data.get("Contraseña")
-    rango = "A"
+    rango = "c"
     usuario = Usuario.query.filter_by(email=email).first()
     if not (nombre and email and contraseña):
         return jsonify({"success": False, "error": "Faltan datos"}), 400
@@ -95,8 +94,9 @@ def signup():
             return jsonify({"success": False, "error": "El email ya está registrado y contraseña incorrecta"}), 401
         login_user(usuario)
         return jsonify({"success": False, "error": "El email ya está registrado"}), 400
-    if Verificacion.query.filter_by(email=email).first():
-        return jsonify({"success": False, "error": "El email ya está pendiente de verificacion"}), 400
+    verificacion=Verificacion.query.filter_by(email=email).first()
+    if verificacion:
+        db.session.delete(verificacion)
     contra_codificada = generate_password_hash(contraseña)
     codigo = ''.join(random.choices('0123456789', k=6))
 

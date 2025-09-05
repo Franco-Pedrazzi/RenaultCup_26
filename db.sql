@@ -11,13 +11,12 @@ CREATE TABLE `usuario` (
 );
 
 CREATE TABLE `Verificacion` (
-  `id` int not NULL auto_increment,
   `Email` VARCHAR(40) not NULL,
   `codigo` VARCHAR(20) not NULL,
   `contra_codificada`  VARCHAR(200) not null,
   `nombre` VARCHAR(40) not NULL,
   `rango` VARCHAR(20) not NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`codigo`)
 );
 
 
