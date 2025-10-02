@@ -1,18 +1,13 @@
-from flask import Flask, render_template,Blueprint, request, jsonify, redirect, url_for
-from flask_cors import CORS
-from jinja2 import TemplateNotFound
+from flask import render_template,Blueprint
+from py.apis import Example,Equipo,Jugador,Responsable,Resultado,Staff,Partido
 
 rutas = Blueprint('rutas', __name__,template_folder='templates')
 
+@rutas.route("/")
+def Index():   
+    examples = Example.query.order_by(Example.id_example).all()
+    return render_template('Index.html',examples=examples)
 
-
-@rutas.route("/signup", methods=["GET"])
-def signup_page():
-    return render_template('signup and login/signup.html')
-
-@rutas.route("/login", methods=["GET"])
-def login_page():
-    return render_template('signup and login/login.html')
 @rutas.route("/Add_Player")
 def Create_Player():
     return render_template('Add/Add_Player.html')

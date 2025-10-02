@@ -1,24 +1,8 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, redirect,url_for
 from py.db import db 
 
 apis = Blueprint("apis", __name__)
 
-
-class Usuario(db.Model):
-    __tablename__ = "usuario"
-    Nombre = db.Column(db.String(40), nullable=False)
-    Email = db.Column(db.String(40), primary_key=True, nullable=False)
-    Contraseña = db.Column(db.String(200), nullable=False)
-    rango = db.Column(db.String(20))
-
-class Verificacion(db.Model):
-    __tablename__ = "Verificacion"
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    Email = db.Column(db.String(40), nullable=False)
-    codigo = db.Column(db.String(20), nullable=False)
-    contra_codificada = db.Column(db.String(200), nullable=False)
-    nombre = db.Column(db.String(40), nullable=False)
-    rango = db.Column(db.String(20), nullable=False)
 
 class Equipo(db.Model):
     __tablename__ = "Equipo"
@@ -84,104 +68,42 @@ class Staff(db.Model):
     Trabajo = db.Column(db.String(15))
     Sector = db.Column(db.String(20))
 
+class Example(db.Model):
+    __tablename__ = "examples"
+    id_example = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    nombre = db.Column(db.String(50), default="-")
+
 def validate_fields(data, required):
     missing = [field for field in required if field not in data or data[field] is None]
     return missing
 
-# tabla USUARIO
-@apis.route("/api/usuario", methods=["GET"])
-def get_usuarios():
-    usuarios = Usuario.query.all()
-    return jsonify([
-        {"Nombre": u.Nombre, "Email": u.Email, "Contraseña": u.Contraseña, "rango": u.rango}
-        for u in usuarios
-    ])
+@apis.route("/api/example", methods=["POST"])
+def add_example():
+    if request.method == 'POST':
+        new_name = request.form['example']
+        new_example = Example(nombre=new_name)
+        db.session.add(new_example)
+        db.session.commit()
+        return redirect(url_for("rutas.Index"))
 
-@apis.route("/api/usuario", methods=["POST"])
-def add_usuario():
-    data = request.get_json()
-    required = ["Nombre", "Email", "Contraseña"]
-    missing = validate_fields(data, required)
-    if missing:
-        return jsonify(success=False, error=f"Faltan campos requeridos: {', '.join(missing)}"), 400
-    if Usuario.query.get(data["Email"]):
-        return jsonify(success=False, error="El usuario ya existe"), 409
-    nuevo = Usuario(**{k: data.get(k) for k in ["Nombre", "Email", "Contraseña", "rango"]})
-    db.session.add(nuevo)
+@apis.route("/api/example/<int:id_example>", methods=["PUT"])
+def update_example(id_example):
+    example = Example.query.get_or_404(id_example)
+    if request.method == 'POST':
+        example.example = request.form['example']
+        db.session.commit()
+        return redirect(url_for("rutas.Index"))
+    
+@apis.route("/api/example/<int:id_example>", methods=["DELETE"])
+def delete_example(id_example):
+    example = Example.query.get(id_example)
+    if not example:
+        return jsonify(success=False, error="Equipo no encontrado"), 404
+    db.session.delete(example)
     db.session.commit()
-    return jsonify(success=True, usuario={"Email": nuevo.Email})
-
-@apis.route("/api/usuario/<email>", methods=["PUT"])
-def update_usuario(email):
-    usuario = Usuario.query.get(email)
-    if not usuario:
-        return jsonify(success=False, error="Usuario no encontrado"), 404
-    data = request.get_json()
-    for k in ["Nombre", "Contraseña", "rango"]:
-        if k in data:
-            setattr(usuario, k, data[k])
-    db.session.commit()
-    return jsonify(success=True, usuario={"Email": usuario.Email})
-
-@apis.route("/api/usuario/<email>", methods=["DELETE"])
-def delete_usuario(email):
-    usuario = Usuario.query.get(email)
-    if not usuario:
-        return jsonify(success=False, error="Usuario no encontrado"), 404
-    db.session.delete(usuario)
-    db.session.commit()
-    return jsonify(success=True, deleted=email)
-
-# tabla VERIFICACION
-@apis.route("/api/verificacion", methods=["GET"])
-def get_verificaciones():
-    verifs = Verificacion.query.all()
-    return jsonify([
-        {"id": v.id, "Email": v.Email, "codigo": v.codigo, "contra_codificada": v.contra_codificada, "nombre": v.nombre, "rango": v.rango}
-        for v in verifs
-    ])
-
-@apis.route("/api/verificacion", methods=["POST"])
-def add_verificacion():
-    data = request.get_json()
-    required = ["Email", "codigo", "contra_codificada", "nombre", "rango"]
-    missing = validate_fields(data, required)
-    if missing:
-        return jsonify(success=False, error=f"Faltan campos requeridos: {', '.join(missing)}"), 400
-    nuevo = Verificacion(**{k: data.get(k) for k in required})
-    db.session.add(nuevo)
-    db.session.commit()
-    return jsonify(success=True, verificacion={"id": nuevo.id})
-
-@apis.route("/api/verificacion/<int:id>", methods=["PUT"])
-def update_verificacion(id):
-    verif = Verificacion.query.get(id)
-    if not verif:
-        return jsonify(success=False, error="Verificación no encontrada"), 404
-    data = request.get_json()
-    for k in ["Email", "codigo", "contra_codificada", "nombre", "rango"]:
-        if k in data:
-            setattr(verif, k, data[k])
-    db.session.commit()
-    return jsonify(success=True, verificacion={"id": verif.id})
-
-@apis.route("/api/verificacion/<int:id>", methods=["DELETE"])
-def delete_verificacion(id):
-    verif = Verificacion.query.get(id)
-    if not verif:
-        return jsonify(success=False, error="Verificación no encontrada"), 404
-    db.session.delete(verif)
-    db.session.commit()
-    return jsonify(success=True, deleted=id)
+    return jsonify(success=True, deleted=id_example)
 
 # tabla EQUIPO
-@apis.route("/api/equipo", methods=["GET"])
-def get_equipos():
-    equipos = Equipo.query.all()
-    return jsonify([
-        {"id_equipo": e.id_equipo, "Deporte": e.Deporte, "Categoria": e.Categoria, "Sexo": e.Sexo, "Colegio": e.Colegio}
-        for e in equipos
-    ])
 
 @apis.route("/api/equipo", methods=["POST"])
 def add_equipo():
@@ -217,13 +139,6 @@ def delete_equipo(id_equipo):
     return jsonify(success=True, deleted=id_equipo)
 
 # tabla JUGADOR
-@apis.route("/api/jugador", methods=["GET"])
-def get_jugadores():
-    jugadores = Jugador.query.all()
-    return jsonify([
-        {"id_jugador": j.id_jugador, "id_equipo": j.id_equipo, "Nombre": j.Nombre, "DNI": j.DNI, "Telefono": j.Telefono, "Email": j.Email, "Comida_especial": j.Comida_especial, "Fecha_nacimiento": str(j.Fecha_nacimiento), "Infracciones": j.Infracciones}
-        for j in jugadores
-    ])
 
 @apis.route("/api/jugador", methods=["POST"])
 def add_jugador():
@@ -259,13 +174,6 @@ def delete_jugador(id_jugador):
     return jsonify(success=True, deleted=id_jugador)
 
 # tabla RESPONSABLE
-@apis.route("/api/responsable", methods=["GET"])
-def get_responsables():
-    responsables = Responsable.query.all()
-    return jsonify([
-        {"id_profesor": r.id_profesor, "id_equipo": r.id_equipo, "Nombre": r.Nombre, "DNI": r.DNI, "Telefono": r.Telefono, "Email": r.Email, "Comida_especial": r.Comida_especial, "Fecha_nacimiento": str(r.Fecha_nacimiento)}
-        for r in responsables
-    ])
 
 @apis.route("/api/responsable", methods=["POST"])
 def add_responsable():
@@ -301,13 +209,6 @@ def delete_responsable(id_profesor):
     return jsonify(success=True, deleted=id_profesor)
 
 # tabla PARTIDO
-@apis.route("/api/partido", methods=["GET"])
-def get_partidos():
-    partidos = Partido.query.all()
-    return jsonify([
-        {"id_partido": p.id_partido, "Deporte": p.Deporte, "Categoria": p.Categoria, "Sexo": p.Sexo, "Arbitro": p.Arbitro, "Planillero": p.Planillero, "Equipo_1": p.Equipo_1, "Equipo_2": p.Equipo_2, "Fase": p.Fase, "Horario_inicio": str(p.Horario_inicio), "Horario_final": str(p.Horario_final)}
-        for p in partidos
-    ])
 
 @apis.route("/api/partido", methods=["POST"])
 def add_partido():
@@ -343,13 +244,6 @@ def delete_partido(id_partido):
     return jsonify(success=True, deleted=id_partido)
 
 # tabla RESULTADO
-@apis.route("/api/resultados", methods=["GET"])
-def get_resultados():
-    resultados = Resultado.query.all()
-    return jsonify([
-        {"id_partido": r.id_partido, "Puntaje_e1": r.Puntaje_e1, "Puntaje_e2": r.Puntaje_e2, "Resultado": r.Resultado, "Infracciones_e1": r.Infracciones_e1, "Infracciones_e2": r.Infracciones_e2}
-        for r in resultados
-    ])
 
 @apis.route("/api/resultados", methods=["POST"])
 def add_resultado():
@@ -387,13 +281,6 @@ def delete_resultado(id_partido):
     return jsonify(success=True, deleted=id_partido)
 
 # tabla STAFF
-@apis.route("/api/staff", methods=["GET"])
-def get_staff():
-    staff = Staff.query.all()
-    return jsonify([
-        {"id_staff": s.id_staff, "Nombre": s.Nombre, "DNI": s.DNI, "Telefono": s.Telefono, "Email": s.Email, "Trabajo": s.Trabajo, "Sector": s.Sector}
-        for s in staff
-    ])
 
 @apis.route("/api/staff", methods=["POST"])
 def add_staff():
@@ -427,3 +314,5 @@ def delete_staff(id_staff):
     db.session.delete(staff)
     db.session.commit()
     return jsonify(success=True, deleted=id_staff)
+
+

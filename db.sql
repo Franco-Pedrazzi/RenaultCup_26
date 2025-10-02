@@ -98,6 +98,15 @@ CREATE TABLE `Staff` (
   PRIMARY KEY (`id_staff`)
 );
 
+CREATE TABLE `Producto` (
+  `id_producto` int AUTO_INCREMENT,
+  `Nombre` VARCHAR(40) NULL DEFAULT NULL,
+  `Precio` int(8) NULL DEFAULT NULL,
+  `tipo_img` VARCHAR(50),
+  `tamaño_img` BIGINT,
+  `pixel_img` LONGBLOB,
+  PRIMARY KEY (`id_producto`)
+);
 
 ALTER TABLE `jugador` ADD FOREIGN KEY (id_equipo) REFERENCES `Equipo` (`id_equipo`);
 ALTER TABLE `Responsable` ADD FOREIGN KEY (id_equipo) REFERENCES `Equipo` (`id_equipo`);
