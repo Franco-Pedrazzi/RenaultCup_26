@@ -105,7 +105,7 @@ def verificar_codigo_page(email=""):
     if form.validate_on_submit():
         info=verificar_codigo(form)
         if info=="True":
-            return redirect(url_for('Index'))
+            return redirect('/')
     elif email!="":
         form.user=email
     return render_template('signup and login/vc.html',form=form,info=info)
@@ -163,7 +163,7 @@ def signup_page():
             email = form.user.data
             return redirect('/verificar_codigo')
         if info=="Log":
-            return redirect(url_for('Index'))
+            return redirect('/')
         
     return render_template('signup and login/signup.html',form=form,info=info)
 
@@ -215,7 +215,7 @@ def login_url():
     if form.validate_on_submit():
         info=login(form)
         if info==True:
-            return redirect(url_for('Index'))
+            return redirect('/')
 
     return render_template('signup and login/login.html',form=form,info=info)
 

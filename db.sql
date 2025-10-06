@@ -1,3 +1,4 @@
+
 DROP DATABASE IF EXISTS Copa_Renault;
 CREATE DATABASE Copa_Renault;
 USE Copa_Renault;

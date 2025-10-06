@@ -29,7 +29,7 @@ login_manager.login_view = "login"
 @login_required
 def logout():
     logout_user()
-    return redirect(url_for("Index"))
+    return redirect('/')
 
 
 if __name__ == "__main__":
