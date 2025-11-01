@@ -12,8 +12,8 @@
         {% for example in examples %}
             <li>
                 {{ example.id_example }} - {{ example.nombre }}
-                 <a href="{{ url_for('edit_user', id_example=example.id_example) }}">Editar</a>
-                <a href="{{ url_for('delete_user', id_example=example.id_example) }}">Borrar</a>
+                <a href="{{ url_for('rutas.edit_user', id_example=example.id_example) }}">Editar</a>
+                <a href="{{ url_for('rutas.delete_user', id_example=example.id_example) }}">Borrar</a>
             </li>
         {% endfor %}
 </div>

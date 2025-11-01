@@ -27,11 +27,17 @@ def Create_Match():
 def Create_Staff():
     return render_template('Add/Add_Staff.html')
 
-@rutas.route("/fixture")
+@rutas.route("/Fixture")
 def fixture():
     return render_template('fixture.html')
+#edicion y borrado de usuario
+@rutas.route("/edit_user/<int:id_example>", methods=["GET", "POST"])
+def edit_user(id_example):
+    return render_template("EditUser/Edit_User.html")
 
-
+@rutas.route("/delete_user/<int:id_example>", methods=["GET", "POST"])
+def delete_user(id_example):
+    return render_template("EditDelete/Delete_User.html")
 
 if __name__ == "__main__":
     rutas.run(debug=True)
