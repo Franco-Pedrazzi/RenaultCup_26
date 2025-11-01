@@ -86,22 +86,22 @@ def add_example():
         db.session.commit()
         return redirect(url_for("rutas.Index"))
 
-@apis.route("/api/example/<int:id_example>", methods=["PUT"])
-def update_example(id_example):
+@apis.route("/api/example/update/<int:id_example>/<string:text>")
+def update_example(id_example,text):
     example = Example.query.get_or_404(id_example)
-    if request.method == 'POST':
-        example.example = request.form['example']
-        db.session.commit()
-        return redirect(url_for("rutas.Index"))
+
+    example.example = text
+    db.session.commit()
+    return redirect("/")
     
-@apis.route("/api/example/<int:id_example>", methods=["DELETE"])
+@apis.route("/api/example/delete/<int:id_example>")
 def delete_example(id_example):
     example = Example.query.get(id_example)
     if not example:
         return jsonify(success=False, error="Equipo no encontrado"), 404
     db.session.delete(example)
     db.session.commit()
-    return jsonify(success=True, deleted=id_example)
+    return redirect("/")
 
 # tabla EQUIPO
 

@@ -1,21 +1,35 @@
 {% extends "./base.html" %}
 
 {% block body %}
-<h2>examples</h2>
+<h2>editar examples</h2>
     <form method="POST" action="/api/example">
         <input type="text" name="example" placeholder="example">
-        <button type="submit">Agregar</button>
+        <button type="submit">editar</button>
     </form>
 
 
 <div id="ShowExamples">
+    {% if current_user.is_authenticated %}
         {% for example in examples %}
-            <li>
+            <h5>
                 {{ example.id_example }} - {{ example.nombre }}
-                <a href="{{ url_for('rutas.edit_user', id_example=example.id_example) }}">Editar</a>
-                <a href="{{ url_for('rutas.delete_user', id_example=example.id_example) }}">Borrar</a>
-            </li>
+                <a href="/api/example/update/{{example.id_example}}">Editar</a>
+                <a href="/api/example/delete/{{example.id_example}}">Borrar</a>
+            </h5>
         {% endfor %}
+    {% else %}
+     {% for example in examples %}
+            <h5>
+                {{ example.id_example }} - {{ example.nombre }}
+            </h5>
+         {% endfor %}
+    {% endif %}
 </div>
-
+<script>
+function actualizarEnlace(id) {
+  const input = document.getElementById("input"+id);
+  const enlace = document.getElementById("a"+id);
+  enlace.href="/api/example/update/"+id+"/"+input.value
+}
+</script>
 {% endblock %}
