@@ -1,12 +1,13 @@
-from flask import Blueprint, request, jsonify, redirect,url_for
+from flask import Blueprint, request, jsonify, redirect,url_for,render_template
 from py.db import db 
+from py.LyS import current_user
 
 apis = Blueprint("apis", __name__)
 
 
 class Equipo(db.Model):
-    __tablename__ = "Equipo"
-    id_equipo = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    __tablename__ = "equipo"
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     Deporte = db.Column(db.String(10), default="-")
     Categoria = db.Column(db.String(10), default="-")
     Sexo = db.Column(db.String(10), default="-")
@@ -14,8 +15,8 @@ class Equipo(db.Model):
 
 class Jugador(db.Model):
     __tablename__ = "jugador"
-    id_jugador = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    id_equipo = db.Column(db.Integer, db.ForeignKey('Equipo.id_equipo'))
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    id_equipo = db.Column(db.Integer, db.ForeignKey('Equipo.id'))
     Nombre = db.Column(db.String(50), default="-")
     DNI = db.Column(db.String(10))
     Telefono = db.Column(db.String(15))
@@ -26,8 +27,8 @@ class Jugador(db.Model):
 
 class Responsable(db.Model):
     __tablename__ = "Responsable"
-    id_profesor = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    id_equipo = db.Column(db.Integer, db.ForeignKey('Equipo.id_equipo'))
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    id_equipo = db.Column(db.Integer, db.ForeignKey('Equipo.id'))
     Nombre = db.Column(db.String(50), default="-")
     DNI = db.Column(db.String(10))
     Telefono = db.Column(db.String(15))
@@ -37,21 +38,17 @@ class Responsable(db.Model):
 
 class Partido(db.Model):
     __tablename__ = "Partido"
-    id_partido = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     Deporte = db.Column(db.String(1))
     Categoria = db.Column(db.String(3))
     Sexo = db.Column(db.String(1))
-    Arbitro = db.Column(db.Integer, db.ForeignKey('Staff.id_staff'))
-    Planillero = db.Column(db.Integer, db.ForeignKey('Staff.id_staff'))
-    Equipo_1 = db.Column(db.Integer, db.ForeignKey('Equipo.id_equipo'))
-    Equipo_2 = db.Column(db.Integer, db.ForeignKey('Equipo.id_equipo'))
+    Arbitro = db.Column(db.Integer, db.ForeignKey('Staff.id'))
+    Planillero = db.Column(db.Integer, db.ForeignKey('Staff.id'))
+    Equipo_1 = db.Column(db.Integer, db.ForeignKey('Equipo.id'))
+    Equipo_2 = db.Column(db.Integer, db.ForeignKey('Equipo.id'))
     Fase = db.Column(db.String(25))
     Horario_inicio = db.Column(db.Time)
     Horario_final = db.Column(db.Time)
-
-class Resultado(db.Model):
-    __tablename__ = "Resultado"
-    id_partido = db.Column(db.Integer, db.ForeignKey('Partido.id_partido'), primary_key=True)
     Puntaje_e1 = db.Column(db.Integer, default=0)
     Puntaje_e2 = db.Column(db.Integer, default=0)
     Resultado = db.Column(db.Integer)
@@ -60,7 +57,7 @@ class Resultado(db.Model):
 
 class Staff(db.Model):
     __tablename__ = "Staff"
-    id_staff = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     Nombre = db.Column(db.String(40))
     DNI = db.Column(db.Integer)
     Telefono = db.Column(db.Integer)
@@ -70,8 +67,21 @@ class Staff(db.Model):
 
 class Example(db.Model):
     __tablename__ = "examples"
-    id_example = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     nombre = db.Column(db.String(50), default="-")
+
+
+
+@apis.route("/updatepage/<string:table>/<int:id>")
+def update(table,id):
+    if not current_user.rango in ["adm","fix"]:
+        _class=globals()[table]
+        objeto = _class.query.filter_by(id=id).first()
+        var_names = [name for name in vars(_class) if not name.startswith('_') and  not name=="id"]   
+        return render_template("/EditUser/update.html",objeto=objeto,var_names=var_names)
+    return redirect("/")
+
+
 
 def validate_fields(data, required):
     missing = [field for field in required if field not in data or data[field] is None]
@@ -86,21 +96,23 @@ def add_example():
         db.session.commit()
         return redirect(url_for("rutas.Index"))
 
-@apis.route("/api/example/update/<int:id_example>/<string:text>")
-def update_example(id_example,text):
-    example = Example.query.get_or_404(id_example)
+@apis.route("/update/examples/<int:id>", methods=["POST","GET"])
+def update_example(id):
+    if not current_user.rango in ["adm","fix"]:
+        example = Example.query.filter_by(id=id).first()
+        print(id)
+        data = request.form
+        example.nombre=data.get("example")
+        db.session.commit()
+    return redirect(f"/")
 
-    example.example = text
-    db.session.commit()
-    return redirect("/")
     
-@apis.route("/api/example/delete/<int:id_example>")
-def delete_example(id_example):
-    example = Example.query.get(id_example)
-    if not example:
-        return jsonify(success=False, error="Equipo no encontrado"), 404
-    db.session.delete(example)
-    db.session.commit()
+@apis.route("/api/example/delete/<int:id>")
+def delete_example(id):
+    if not current_user.rango in ["adm","cant","fix"]:
+        example = Example.query.get(id)
+        db.session.delete(example)
+        db.session.commit()
     return redirect("/")
 
 # tabla EQUIPO
@@ -115,28 +127,28 @@ def add_equipo():
     nuevo = Equipo(**{k: data.get(k) for k in required})
     db.session.add(nuevo)
     db.session.commit()
-    return jsonify(success=True, equipo={"id_equipo": nuevo.id_equipo})
+    return jsonify(success=True, equipo={"id": nuevo.id})
 
-@apis.route("/api/equipo/<int:id_equipo>", methods=["PUT"])
-def update_equipo(id_equipo):
-    equipo = Equipo.query.get(id_equipo)
-    if not equipo:
-        return jsonify(success=False, error="Equipo no encontrado"), 404
-    data = request.get_json()
-    for k in ["Deporte", "Categoria", "Sexo", "Colegio"]:
-        if k in data:
-            setattr(equipo, k, data[k])
-    db.session.commit()
-    return jsonify(success=True, equipo={"id_equipo": equipo.id_equipo})
+@apis.route("/update/equipo/<int:id>", methods=["POST","GET"])
+def update_equipo(id):
+    if not current_user.rango in ["adm","fix"]:
+        equipo = Equipo.query.filter_by(id=id).first()
+        
+        data = request.form
+        equipo.Deporte=data.get("Deporte")
+        equipo.Categoria=data.get("Categoria")
+        equipo.Sexo=data.get("Sexo")
+        equipo.Colegio=data.get("Colegio")
+        db.session.commit()
+    return redirect(f"/")
 
-@apis.route("/api/equipo/<int:id_equipo>", methods=["DELETE"])
-def delete_equipo(id_equipo):
-    equipo = Equipo.query.get(id_equipo)
-    if not equipo:
-        return jsonify(success=False, error="Equipo no encontrado"), 404
-    db.session.delete(equipo)
-    db.session.commit()
-    return jsonify(success=True, deleted=id_equipo)
+@apis.route("/api/equipo/delete/<int:id>")
+def delete_equipo(id):
+    if current_user.rango in ["adm","cant","fix"]:
+        equipo = Equipo.query.get(id)
+        db.session.delete(equipo)
+        db.session.commit()
+    return redirect("/")
 
 # tabla JUGADOR
 
@@ -150,28 +162,29 @@ def add_jugador():
     nuevo = Jugador(**{k: data.get(k) for k in ["id_equipo", "Nombre", "DNI", "Telefono", "Email", "Comida_especial", "Fecha_nacimiento", "Infracciones"]})
     db.session.add(nuevo)
     db.session.commit()
-    return jsonify(success=True, jugador={"id_jugador": nuevo.id_jugador})
+    return jsonify(success=True, jugador={"id": nuevo.id})
 
-@apis.route("/api/jugador/<int:id_jugador>", methods=["PUT"])
-def update_jugador(id_jugador):
-    jugador = Jugador.query.get(id_jugador)
-    if not jugador:
-        return jsonify(success=False, error="Jugador no encontrado"), 404
-    data = request.get_json()
-    for k in ["id_equipo", "Nombre", "DNI", "Telefono", "Email", "Comida_especial", "Fecha_nacimiento", "Infracciones"]:
-        if k in data:
-            setattr(jugador, k, data[k])
-    db.session.commit()
-    return jsonify(success=True, jugador={"id_jugador": jugador.id_jugador})
+@apis.route("/update/jugador/<int:id>", methods=["POST","GET"])
+def update_jugador(id):
+    if not current_user.rango in ["adm","fix"]:
+        jugador = Equipo.query.filter_by(id=id).first()
+        
+        data = request.form
+        jugador.Deporte=data.get("Deporte")
+        jugador.Categoria=data.get("Categoria")
+        jugador.Sexo=data.get("Sexo")
+        jugador.Colegio=data.get("Colegio")
+        db.session.commit()
+    return redirect(f"/")
 
-@apis.route("/api/jugador/<int:id_jugador>", methods=["DELETE"])
-def delete_jugador(id_jugador):
-    jugador = Jugador.query.get(id_jugador)
+@apis.route("/api/jugador/<int:id>", methods=["DELETE"])
+def delete_jugador(id):
+    jugador = Jugador.query.get(id)
     if not jugador:
         return jsonify(success=False, error="Jugador no encontrado"), 404
     db.session.delete(jugador)
     db.session.commit()
-    return jsonify(success=True, deleted=id_jugador)
+    return jsonify(success=True, deleted=id)
 
 # tabla RESPONSABLE
 
@@ -185,100 +198,48 @@ def add_responsable():
     nuevo = Responsable(**{k: data.get(k) for k in ["id_equipo", "Nombre", "DNI", "Telefono", "Email", "Comida_especial", "Fecha_nacimiento"]})
     db.session.add(nuevo)
     db.session.commit()
-    return jsonify(success=True, responsable={"id_profesor": nuevo.id_profesor})
+    return jsonify(success=True, responsable={"id": nuevo.id})
 
-@apis.route("/api/responsable/<int:id_profesor>", methods=["PUT"])
-def update_responsable(id_profesor):
-    responsable = Responsable.query.get(id_profesor)
-    if not responsable:
-        return jsonify(success=False, error="Responsable no encontrado"), 404
-    data = request.get_json()
-    for k in ["id_equipo", "Nombre", "DNI", "Telefono", "Email", "Comida_especial", "Fecha_nacimiento"]:
-        if k in data:
-            setattr(responsable, k, data[k])
-    db.session.commit()
-    return jsonify(success=True, responsable={"id_profesor": responsable.id_profesor})
+@apis.route("/api/responsable/<int:id>", methods=["PUT"])
+def update_responsable(id):
+    pass
 
-@apis.route("/api/responsable/<int:id_profesor>", methods=["DELETE"])
-def delete_responsable(id_profesor):
-    responsable = Responsable.query.get(id_profesor)
+@apis.route("/api/responsable/<int:id>", methods=["DELETE"])
+def delete_responsable(id):
+    responsable = Responsable.query.get(id)
     if not responsable:
         return jsonify(success=False, error="Responsable no encontrado"), 404
     db.session.delete(responsable)
     db.session.commit()
-    return jsonify(success=True, deleted=id_profesor)
+    return jsonify(success=True, deleted=id)
 
 # tabla PARTIDO
 
 @apis.route("/api/partido", methods=["POST"])
 def add_partido():
     data = request.get_json()
-    required = ["Deporte", "Categoria", "Sexo", "Arbitro", "Planillero", "Equipo_1", "Equipo_2", "Fase", "Horario_inicio", "Horario_final"]
+    required = ["Deporte", "Categoria", "Sexo", "Arbitro", "Planillero", "Equipo_1", "Equipo_2", "Fase", "Horario_inicio", "Horario_final","Puntaje_e1", "Puntaje_e2", "Resultado", "Infracciones_e1", "Infracciones_e2"]
     missing = validate_fields(data, required)
     if missing:
         return jsonify(success=False, error=f"Faltan campos requeridos: {', '.join(missing)}"), 400
     nuevo = Partido(**{k: data.get(k) for k in required})
     db.session.add(nuevo)
     db.session.commit()
-    return jsonify(success=True, partido={"id_partido": nuevo.id_partido})
+    return jsonify(success=True, partido={"id": nuevo.id})
 
-@apis.route("/api/partido/<int:id_partido>", methods=["PUT"])
-def update_partido(id_partido):
-    partido = Partido.query.get(id_partido)
-    if not partido:
-        return jsonify(success=False, error="Partido no encontrado"), 404
-    data = request.get_json()
-    for k in ["Deporte", "Categoria", "Sexo", "Arbitro", "Planillero", "Equipo_1", "Equipo_2", "Fase", "Horario_inicio", "Horario_final"]:
-        if k in data:
-            setattr(partido, k, data[k])
-    db.session.commit()
-    return jsonify(success=True, partido={"id_partido": partido.id_partido})
+@apis.route("/api/partido/<int:id>", methods=["PUT"])
+def update_partido(id):
+    pass
 
-@apis.route("/api/partido/<int:id_partido>", methods=["DELETE"])
-def delete_partido(id_partido):
-    partido = Partido.query.get(id_partido)
+@apis.route("/api/partido/<int:id>", methods=["DELETE"])
+def delete_partido(id):
+    partido = Partido.query.get(id)
     if not partido:
         return jsonify(success=False, error="Partido no encontrado"), 404
     db.session.delete(partido)
     db.session.commit()
-    return jsonify(success=True, deleted=id_partido)
+    return jsonify(success=True, deleted=id)
 
-# tabla RESULTADO
-
-@apis.route("/api/resultados", methods=["POST"])
-def add_resultado():
-    data = request.get_json()
-    required = ["id_partido", "Puntaje_e1", "Puntaje_e2", "Resultado", "Infracciones_e1", "Infracciones_e2"]
-    missing = validate_fields(data, required)
-    if missing:
-        return jsonify(success=False, error=f"Faltan campos requeridos: {', '.join(missing)}"), 400
-    if Resultado.query.get(data["id_partido"]):
-        return jsonify(success=False, error="Resultado para ese partido ya existe"), 409
-    nuevo = Resultado(**{k: data.get(k) for k in required})
-    db.session.add(nuevo)
-    db.session.commit()
-    return jsonify(success=True, resultado={"id_partido": nuevo.id_partido})
-
-@apis.route("/api/resultados/<int:id_partido>", methods=["PUT"])
-def update_resultado(id_partido):
-    resultado = Resultado.query.get(id_partido)
-    if not resultado:
-        return jsonify(success=False, error="Resultado no encontrado"), 404
-    data = request.get_json()
-    for k in ["Puntaje_e1", "Puntaje_e2", "Resultado", "Infracciones_e1", "Infracciones_e2"]:
-        if k in data:
-            setattr(resultado, k, data[k])
-    db.session.commit()
-    return jsonify(success=True, resultado={"id_partido": resultado.id_partido})
-
-@apis.route("/api/resultados/<int:id_partido>", methods=["DELETE"])
-def delete_resultado(id_partido):
-    resultado = Resultado.query.get(id_partido)
-    if not resultado:
-        return jsonify(success=False, error="Resultado no encontrado"), 404
-    db.session.delete(resultado)
-    db.session.commit()
-    return jsonify(success=True, deleted=id_partido)
 
 # tabla STAFF
 
@@ -292,27 +253,19 @@ def add_staff():
     nuevo = Staff(**{k: data.get(k) for k in required})
     db.session.add(nuevo)
     db.session.commit()
-    return jsonify(success=True, staff={"id_staff": nuevo.id_staff})
+    return jsonify(success=True, staff={"id": nuevo.id})
 
-@apis.route("/api/staff/<int:id_staff>", methods=["PUT"])
-def update_staff(id_staff):
-    staff = Staff.query.get(id_staff)
-    if not staff:
-        return jsonify(success=False, error="Staff no encontrado"), 404
-    data = request.get_json()
-    for k in ["Nombre", "DNI", "Telefono", "Email", "Trabajo", "Sector"]:
-        if k in data:
-            setattr(staff, k, data[k])
-    db.session.commit()
-    return jsonify(success=True, staff={"id_staff": staff.id_staff})
+@apis.route("/api/staff/<int:id>", methods=["PUT"])
+def update_staff(id):
+    pass
 
-@apis.route("/api/staff/<int:id_staff>", methods=["DELETE"])
-def delete_staff(id_staff):
-    staff = Staff.query.get(id_staff)
+@apis.route("/api/staff/<int:id>", methods=["DELETE"])
+def delete_staff(id):
+    staff = Staff.query.get(id)
     if not staff:
         return jsonify(success=False, error="Staff no encontrado"), 404
     db.session.delete(staff)
     db.session.commit()
-    return jsonify(success=True, deleted=id_staff)
+    return jsonify(success=True, deleted=id)
 
 

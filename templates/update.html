@@ -1,0 +1,14 @@
+{% extends "./base.html" %}
+
+{% block body %}
+<form method="post" action="/update/{{objeto.__tablename__}}/{{objeto.id}}" >
+    <H1>{{objeto.__tablename__}}</H1>
+    {% for var_name in var_names %}
+    {{var_name}} <input type="text" name="{{var_name}}" value="{{ objeto | attr(var_name) }}" placeholder="{{ objeto | attr(var_name) }}" style="height: 250px;width: 50%;" required>
+    <br>
+    {% endfor %}
+
+    <button type="submit">editar</button>
+    
+</form>
+{% endblock %}
