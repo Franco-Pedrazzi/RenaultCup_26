@@ -8,6 +8,14 @@ def Index():
     examples = Example.query.order_by(Example.id_example).all()
     return render_template('Index.html',examples=examples)
 
+@rutas.route("/sponsors")
+def Sponsors():
+    return render_template('Sponsors.html')
+
+@rutas.route("/equipos")
+def Equipos():
+    return render_template('Equipos.html')
+
 @rutas.route("/Add_Player")
 def Create_Player():
     return render_template('Add/Add_Player.html')
