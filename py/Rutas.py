@@ -1,11 +1,11 @@
 from flask import render_template,Blueprint
-from py.apis import Example,Equipo,Jugador,Responsable,Resultado,Staff,Partido
+from py.apis import Example,Equipo,Jugador,Responsable,Staff,Partido
 
 rutas = Blueprint('rutas', __name__,template_folder='templates')
 
 @rutas.route("/")
 def Index():   
-    examples = Example.query.order_by(Example.id_example).all()
+    examples = Example.query.order_by(Example.id).all()
     return render_template('Index.html',examples=examples)
 
 @rutas.route("/sponsors")
@@ -39,12 +39,12 @@ def Create_Staff():
 def fixture():
     return render_template('fixture.html')
 #edicion y borrado de usuario
-@rutas.route("/edit_user/<int:id_example>", methods=["GET", "POST"])
-def edit_user(id_example):
+@rutas.route("/edit_user/<int:id>", methods=["GET", "POST"])
+def edit_user(id):
     return render_template("EditUser/Edit_User.html")
 
-@rutas.route("/delete_user/<int:id_example>", methods=["GET", "POST"])
-def delete_user(id_example):
+@rutas.route("/delete_user/<int:id>", methods=["GET", "POST"])
+def delete_user(id):
     return render_template("EditDelete/Delete_User.html")
 
 if __name__ == "__main__":
