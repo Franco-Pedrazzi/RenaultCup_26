@@ -1,0 +1,122 @@
+{% extends "./base.html" %}
+{% block body %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Partidos</title>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/equipos.css') }}">
+</head>
+
+<body>
+
+  <h2 class="equipos text-center mb-4">Partidos</h2>
+<div style="display: flex;">
+   <div class="d-flex justify-content-end me-3 mb-3">
+    <div class="dropdown">
+      <button class="btn dropdown-toggle botonDropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+        {{ sport }}
+      </button>
+      <ul class="dropdown-menu">
+        <li><a class="dropdown-item" href="/equipos/Básquet">Básquet</a></li>
+        <li><a class="dropdown-item" href="/equipos/Fútbol">Fútbol</a></li>
+        <li><a class="dropdown-item" href="/equipos/Vóley">Vóley</a></li>
+      </ul>
+    </div>
+  </div>
+
+    <div class="d-flex justify-content-end me-3 mb-3">
+    <div class="dropdown">
+      <button id="category_select" class="btn dropdown-toggle botonDropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+         categoria
+      </button>
+      <ul class="dropdown-menu">
+        <li><button class="dropdown-item" >mayor</button></li>
+        <li><button class="dropdown-item" >menor</button></li>
+      </ul>
+    </div>
+  </div>
+
+    <div class="d-flex justify-content-end me-3 mb-3">
+    <div class="dropdown">
+      <button id="category_select" class="btn dropdown-toggle botonDropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+         sexo
+      </button>
+      <ul class="dropdown-menu">
+        <li><button class="dropdown-item" >Masculino</button></li>
+        <li><button class="dropdown-item" >Femenino</button></li>
+      </ul>
+    </div>
+  </div>
+</div>
+  <ul class="nav nav-underline mb-4">
+    <li class="nav-item ms-3">
+      <a class="nav-link active partidos" id="actual-tab" data-bs-toggle="tab" href="#partidos-actuales" role="tab">
+        Partidos
+      </a>
+    </li>
+    <li class="nav-item ms-2">
+      <a class="nav-link partidos pasados" id="pasados-tab" data-bs-toggle="tab" href="#partidos-past" role="tab">
+        Partidos pasados
+      </a>
+    </li>
+  </ul>
+
+  <div class="tab-content" id="matchesTabContent">
+    {% for partido in partidos %}
+   
+    <div class="tab-pane fade show active" id="partidos-actuales" role="tabpanel">
+      <p class="text-muted text-center">Mayo – viernes 16</p>
+
+       <div class="card match-card border-0 mb-3">
+        <div class="d-flex justify-content-between align-items-center p-3 bg-white">
+          <img src="/static/images/coparenault.png" alt="Logo copa renault" class="logo-copaRenault">
+          <span class="time-badge">{{ partido.Horario_inicio }}</span>
+        </div>
+
+
+        <div class="row text-center align-items-center bg-white py-3 ">
+         {% for equipo in equipos %}
+         {% if equipo.id==partido.Equipo_1 %}
+          <div class="col">
+            <img src="/static/images/logo-Itr.png" class="team-logo mb-2" alt="ITR logo">
+            <h6 class="fw-bold">{{equipo.id}}_{{equipo.Colegio}}</h6>
+          </div>
+        {% endif %}
+        {% endfor %}
+
+         {% for equipo in equipos %}
+         {% if equipo.id==partido.Equipo_2 %}
+          <div class="col">
+            <img src="/static/images/logo-Itr.png" class="team-logo mb-2" alt="ITR logo">
+            <h6 class="fw-bold">{{equipo.id}}_{{equipo.Colegio}}</h6>
+          </div>
+        {% endif %}
+        {% endfor %}
+
+        <div class="match-footer">
+          <p class="fw-bold">Categoria: {{partido.Categoria}}</p>
+          <p class="fw-bold">Sexo: {{partido.Sexo}}</p>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="tab-pane fade" id="partidos-past" role="tabpanel">
+      <p class="text-center text-muted">No past matches available.</p>
+    </div>
+    {% endfor %}
+  </div>
+
+ 
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+
+</html>
+{% endblock %}

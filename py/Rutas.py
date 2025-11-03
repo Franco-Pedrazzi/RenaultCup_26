@@ -12,9 +12,13 @@ def Index():
 def Sponsors():
     return render_template('Sponsors.html')
 
-@rutas.route("/equipos")
-def Equipos():
-    return render_template('Equipos.html')
+@rutas.route("/equipos/<string:sport>")
+def Fixrute(sport="Deporte"):
+    letters= list(sport)
+    partidos=Partido.query.filter_by(Deporte=letters[0]).all()
+    equipos=Equipo.query.all()
+    print(letters)
+    return render_template('fixture.html',sport=sport,partidos=partidos,equipos=equipos)
 
 @rutas.route("/Add_Player")
 def Create_Player():
@@ -36,7 +40,7 @@ def Create_Staff():
     return render_template('Add/Add_Staff.html')
 
 @rutas.route("/Fixture")
-def fixture():
+def Equipos():
     return render_template('fixture.html')
 #edicion y borrado de usuario
 @rutas.route("/edit_user/<int:id>", methods=["GET", "POST"])
