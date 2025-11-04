@@ -70,6 +70,15 @@ class Example(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     nombre = db.Column(db.String(50), default="-")
 
+class Producto (db.Model):
+  __tablename__ = "Producto"
+  id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+  Nombre= db.Column(db.String(50), default="-")
+  Precio = db.Column(db.Integer)
+  tipo_img = db.Column(db.String(50))
+  tamaño_img = db.Column(db.BigInteger)
+  pixel_img = db.Column(db.LargeBinary)
+
 
 
 @apis.route("/updatepage/<string:table>/<int:id>")
@@ -78,7 +87,7 @@ def update(table,id):
         _class=globals()[table]
         objeto = _class.query.filter_by(id=id).first()
         var_names = [name for name in vars(_class) if not name.startswith('_') and  not name=="id"]   
-        return render_template("/EditUser/update.html",objeto=objeto,var_names=var_names)
+        return render_template("/update.html",objeto=objeto,var_names=var_names)
     return redirect("/")
 
 
@@ -268,4 +277,66 @@ def delete_staff(id):
     db.session.commit()
     return jsonify(success=True, deleted=id)
 
+@apis.route("/cantina/agregar", methods=["POST","Get"])
+def add_product():
+    if current_user.rango in ["admin","cantina"]:
+        data = request.form
+
+        
+        archivo = request.files.get("archivo")
+
+        tipo = ""
+        tamano = 0
+        pixel = None
+
+        tipo = archivo.content_type
+        cont = archivo.read()
+        tamano = len(cont)
+        pixel = cont
+
+        nuevo = Producto(
+            Nombre=data.get("nombre"),
+            Precio=float(data.get("precio")),
+            tipo_img=tipo,
+            tamaño_img=tamano,
+            pixel_img=pixel
+        )
+
+        try:
+            db.session.add(nuevo)
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            return f"Error al guardar: {e}", 500
+
+        return redirect("/cantina")
+
+@apis.route("/update/examples/<int:id>", methods=["POST","GET"])
+def update_product(id):
+    if current_user.rango in ["admin","cantina"]:
+        producto = Producto.query.filter_by(id=id).first()
+        data = request.form
+        archivo = request.files.get("archivo")
+        tipo = archivo.content_type
+        cont = archivo.read()
+        tamano = len(cont)
+        pixel = cont
+
+        producto.Nombre=data.get("Nombre")
+        producto.Precio=data.get("Precio")
+        tipo_img=tipo,
+        tamaño_img=tamano,
+        pixel_img=pixel
+
+        db.session.commit()
+    return redirect(f"/cantina")
+
+    
+@apis.route("/api/product/delete/<int:id>")
+def delete_product(id):
+    if current_user.rango in ["admin","cantina"]:
+        producto = Producto.query.get(id)
+        db.session.delete(producto)
+        db.session.commit()
+    return redirect("/cantina")
 

@@ -27,8 +27,10 @@
       <!-- botones de navegación como botones -->
 <div class="d-flex gap-2">
     <button type="button" class="btn btn-light" onclick="location.href='http://127.0.0.1:5000/'">Inicio</button>
-    <button type="button" class="btn btn-light" onclick="location.href='#'">Cantina</button>
-    
+    <button type="button" class="btn btn-light" onclick="location.href='http://127.0.0.1:5000/cantina'">Cantina</button>
+    {% if current_user.rango=="admin" %}
+    <button type="button" class="btn btn-light" onclick="location.href='http://127.0.0.1:5000/staff'">staff</button>
+    {% endif %}
     <!-- Dropdown Equipos -->
     <div class="btn-group">
         <button type="button" class="btn btn-light dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
@@ -42,7 +44,7 @@
     </div>
 
     <button type="button" class="btn btn-light" onclick="location.href='http://127.0.0.1:5000/sponsors'">Sponsors</button>
-    <button type="button" class="btn btn-light" onclick="location.href='http://127.0.0.1:5000/equipos'">Fixture</button>
+    <button type="button" class="btn btn-light" onclick="location.href='http://127.0.0.1:5000/fixtures/Deporte'">Fixture</button>
 </div>
 
 
