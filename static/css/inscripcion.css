@@ -1,0 +1,32 @@
+body {
+    background-color: #f8f9fa;
+    font-family: 'Poppins', sans-serif;
+}
+
+h2 {
+    color: #333;
+}
+
+.form-label {
+    font-weight: 500;
+}
+
+textarea {
+    resize: none;
+}
+
+.container {
+    max-width: 900px;
+}
+
+.botonDropdown {
+    background-color: #facd46;
+    border: none;
+    color: #000;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.botonDropdown:hover {
+    background-color: #eabf3f;
+    transform: translateY(-2px);
+}

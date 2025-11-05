@@ -43,6 +43,7 @@ def Cantina():
 def hell():
     return render_template('Add/Add_Equipo.html')
 
+
 @rutas.route("/Add_Match")
 def Create_Match():
     return render_template('Add/Add_Match.html')
@@ -58,9 +59,13 @@ def Create_Staff(error):
     return render_template('Add/Add_Staff.html',usuarios=usuarios,error=error)
     
 
+@rutas.route("/inscripcion")
+def Inscripcion():
+    return render_template('inscripcion.html')
+
 @rutas.route("/equipos")
 def Equipos():
-    return render_template('fixture.html')
+    return render_template('equipos.html')
 #edicion y borrado de usuario
 @rutas.route("/edit_user/<int:id>", methods=["GET", "POST"])
 def edit_user(id):

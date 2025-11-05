@@ -12,6 +12,7 @@
 
   <!-- Nuestro CSS -->
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 
 <body>
@@ -29,7 +30,7 @@
     <button type="button" class="btn btn-light" onclick="location.href='http://127.0.0.1:5000/'">Inicio</button>
     <button type="button" class="btn btn-light" onclick="location.href='http://127.0.0.1:5000/cantina'">Cantina</button>
     {% if current_user.rango=="admin" %}
-    <button type="button" class="btn btn-light" onclick="location.href='http://127.0.0.1:5000/staff'">staff</button>
+    <button type="button" class="btn btn-light" onclick="location.href='http://127.0.0.1:5000/staff/page'">staff</button>
     {% endif %}
     <!-- Dropdown Equipos -->
     <div class="btn-group">
@@ -37,8 +38,8 @@
             Equipos
         </button>
         <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="#">Colegios participantes</a></li>
-            <li><a class="dropdown-item" href="#">Inscripcion de Equipo</a></li>
+            <li><a class="dropdown-item" onclick="location.href='http://127.0.0.1:5000/equipos'">Colegios participantes</a></li>
+            <li><a class="dropdown-item" onclick="location.href='http://127.0.0.1:5000/inscripcion'">Inscripcion de Equipo</a></li>
 
         </ul>
     </div>
@@ -61,11 +62,8 @@
     <div>
 
       {% if current_user.is_authenticated %}
-      <span>Bienvenido/a {{ current_user.Nombre }}</span>
-      <form action="{{ url_for('logout') }}" method="get" style="display:inline;">
-        <button type="submit">Cerrar sesión</button>
-        <button type="button" class="btn btn-light">Cerrar sesiónnnn</button>
-      </form>
+      <span>Bienvenido/a <span style="font-weight: bold;">{{ current_user.nombre }}</resaltar></span>
+        <button onclick="location.href='/logout'" type="button" class="btn btn-danger">Cerrar sesión</button>
       {% else %}
       <button type="button" class="btn btn-light" onclick="location.href='http://127.0.0.1:5000/login'">Login</button>
       <button type="button" class="btn btn-light" onclick="location.href='http://127.0.0.1:5000/singup'">Sing Up</button>
