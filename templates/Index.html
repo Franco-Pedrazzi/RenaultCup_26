@@ -15,68 +15,132 @@
 
 <body>
     <div class="header-copa container-fluid">
-    <div class="row align-items-center position-relative">
+        <div class="row align-items-center position-relative">
 
-        <!-- Logo Renault a la izquierda -->
-        <div class="logo-renault">
-            <img src="{{ url_for('static', filename='images/logoRenault.png') }}" alt="Logo Renault Copa">
-        </div>
+            <!-- Logo Renault a la izquierda -->
+            <div class="logo-renault">
+                <img src="{{ url_for('static', filename='images/logoRenault.png') }}" alt="Logo Renault Copa">
+            </div>
 
-        <!-- Contenido a la derecha -->
-        <div class="col-md-6 col-contenido offset-md-4">
-            <!-- Texto central Copa Renault -->
-            <h1 class="tituloCopa">Copa Renault</h1>
+            <!-- Contenido a la derecha -->
+            <div class="col-md-6 col-contenido offset-md-4">
+                <!-- Texto central Copa Renault -->
+                <h1 class="tituloCopa">Copa Renault</h1>
 
-            <!-- Trofeo -->
-            <img src="{{ url_for('static', filename='images/Trofeo-Copa-Renault.png') }}"
-                class="img-Trofeo-CopaRenault" alt="Trofeo Copa Renault">
+                <!-- Trofeo -->
+                <img src="{{ url_for('static', filename='images/Trofeo-Copa-Renault.png') }}"
+                    class="img-Trofeo-CopaRenault" alt="Trofeo Copa Renault">
 
-            <!-- Texto + botón -->
-            <h2 class="fw-bold text-dark mt-4">TOP SCORER TO THE FINAL MATCH</h2>
-            <p class="text-secondary mt-3 mb-4">
-                La Copa Renault premia al jugador con mayor puntuación en la final,
-                destacando su esfuerzo, constancia y rendimiento sobresaliente.
-            </p>
-            <a href="#" class="btn btn-dark px-4 py-2">Ver más</a>
+                <!-- Texto + botón -->
+                <h2 class="fw-bold text-dark mt-4">TOP SCORER TO THE FINAL MATCH</h2>
+                <p class="text-secondary mt-3 mb-4">
+                    La Copa Renault premia al jugador con mayor puntuación en la final,
+                    destacando su esfuerzo, constancia y rendimiento sobresaliente.
+                </p>
+                <a href="#" class="btn btn-dark px-4 py-2">Ver más</a>
+            </div>
         </div>
     </div>
-</div>
 
+    <div class="container my-5">
+        <h2 class="mb-4">Category</h2>
+        <div class="row g-3">
+
+            <!-- Football -->
+            <div class="col-6 col-md-3 category-card">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">FOOTBALL</h5>
+                    </div>
+                    <img src="{{ url_for('static', filename='images/deportes/futbolPortada.jpg') }}"
+                        class="card-img-bottom" alt="Football">
+                </div>
+            </div>
+
+            <!-- Basketball -->
+            <div class="col-6 col-md-3 category-card">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">BASKET BALL</h5>
+                    </div>
+                    <img src="{{ url_for('static', filename='images/deportes/basquetPortada.jpeg') }}"
+                        class="card-img-bottom" alt="Basketball">
+                </div>
+            </div>
+
+            <!-- Car Sport -->
+            <div class="col-6 col-md-3 category-card">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">CAR SPORT</h5>
+                    </div>
+                    <img src="{{ url_for('static', filename='images/deportes/voleyPortada.jpeg') }}"
+                        class="card-img-bottom" alt="Car Sport">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--tabla colegios punteros hasta el momento-->
 <div class="container my-5">
-    <h2 class="mb-4">Category</h2>
-    <div class="row g-3">
+    <h2 class="fw-bold mb-4 text-uppercase text-center">Ranking Colegios punteros</h2>
+    <p>Aqui podras ir viendo minuto a minuto quienes vienen ganando la copa renault 2026!</p>
 
-        <!-- Football -->
-        <div class="col-6 col-md-3 category-card">
-            <div class="card text-center">
-                <div class="card-body">
-                    <h5 class="card-title">FOOTBALL</h5>
-                </div>
-                <img src="{{ url_for('static', filename='images/deportes/futbolPortada.jpg') }}" class="card-img-bottom" alt="Football">
-            </div>
-        </div>
-
-        <!-- Basketball -->
-        <div class="col-6 col-md-3 category-card">
-            <div class="card text-center">
-                <div class="card-body">
-                    <h5 class="card-title">BASKET BALL</h5>
-                </div>
-                <img src="{{ url_for('static', filename='images/deportes/basquetPortada.jpeg') }}" class="card-img-bottom" alt="Basketball">
-            </div>
-        </div>
-
-        <!-- Car Sport -->
-        <div class="col-6 col-md-3 category-card">
-            <div class="card text-center">
-                <div class="card-body">
-                    <h5 class="card-title">CAR SPORT</h5>
-                </div>
-                <img src="{{ url_for('static', filename='images/deportes/voleyPortada.jpeg') }}" class="card-img-bottom" alt="Car Sport">
-            </div>
-        </div>
+    <div class="table-wrapper shadow-sm rounded-3">
+        <table class="table table-hover align-middle text-center mb-0">
+            <thead class="table-light sticky-header">
+                <tr>
+                    <th>Puesto</th>
+                    <th>Colegio</th>
+                    <th>Fútbol</th>
+                    <th>Voley</th>
+                    <th>Basquet</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td class="text-start"><img src="{{ url_for('static', filename='images/mancity.png') }}" class="club-logo me-2">Manchester City</td>
+                    <td>38</td><td>29</td><td>6</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td class="text-start"><img src="{{ url_for('static', filename='images/liverpool.png') }}" class="club-logo me-2">Liverpool</td>
+                    <td>38</td><td>28</td><td>8</td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td class="text-start"><img src="{{ url_for('static', filename='images/chelsea.png') }}" class="club-logo me-2">Chelsea</td>
+                    <td>38</td><td>21</td><td>11</td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td class="text-start"><img src="{{ url_for('static', filename='images/tottenham.png') }}" class="club-logo me-2">Tottenham Hotspur</td>
+                    <td>38</td><td>22</td><td>5</td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td class="text-start"><img src="{{ url_for('static', filename='images/arsenal.png') }}" class="club-logo me-2">Arsenal</td>
+                    <td>38</td><td>22</td><td>3</td>
+                </tr>
+                <tr>
+                    <td>6</td>
+                    <td class="text-start"><img src="{{ url_for('static', filename='images/manutd.png') }}" class="club-logo me-2">Manchester United</td>
+                    <td>38</td><td>16</td><td>10</td>
+                </tr>
+                <!-- repetimos para probar scroll -->
+                {% for i in range(7,11) %}
+                <tr>
+                    <td>{{ i }}</td>
+                    <td class="text-start">Equipo {{ i }}</td>
+                    <td>38</td><td>22</td><td>5</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 </div>
+
 
 
     <h2>editar examples</h2>
