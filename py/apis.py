@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify, redirect,url_for,render_template
 from py.db import db 
-from py.LyS import current_user
+from py.LyS import current_user,Usuario
 
 apis = Blueprint("apis", __name__)
 
@@ -311,22 +311,25 @@ def add_product():
 
         return redirect("/cantina")
 
-@apis.route("/update/examples/<int:id>", methods=["POST","GET"])
+@apis.route("/update/Producto/<int:id>", methods=["POST","GET"])
 def update_product(id):
     if current_user.rango in ["admin","cantina"]:
         producto = Producto.query.filter_by(id=id).first()
         data = request.form
         archivo = request.files.get("archivo")
-        tipo = archivo.content_type
-        cont = archivo.read()
-        tamano = len(cont)
-        pixel = cont
+        if archivo.filename != "":
+            print(archivo.filename)
+            tipo = archivo.content_type
+            cont = archivo.read()
+            tamano = len(cont)
+            pixel = cont
+            producto.tipo_img=tipo
+            producto.tamaño_img=tamano
+            producto.pixel_img=pixel
 
         producto.Nombre=data.get("Nombre")
         producto.Precio=data.get("Precio")
-        tipo_img=tipo,
-        tamaño_img=tamano,
-        pixel_img=pixel
+
 
         db.session.commit()
     return redirect(f"/cantina")
@@ -340,3 +343,15 @@ def delete_product(id):
         db.session.commit()
     return redirect("/cantina")
 
+@apis.route("/api/usuario/rango", methods=["POST","GET"])
+def update_range():
+    if current_user.rango in ["admin"]:
+        data = request.form
+        usuario = Usuario.query.filter_by(email=data.get("email")).first()
+        if usuario:
+            usuario.rango=data.get("rango")
+        else:
+           return redirect(f"/staff/error") 
+
+        db.session.commit()
+    return redirect(f"/staff/page")

@@ -125,7 +125,7 @@ def signup(form):
     nombre = form.name.data
     email = form.user.data
     contraseña = form.password.data
-    rango = "c"
+    rango = "cliente"
 
     usuario = Usuario.query.filter_by(email=email).first()
     if not (nombre and email and contraseña):
@@ -218,4 +218,5 @@ def login_url():
             return redirect('/')
 
     return render_template('signup and login/login.html',form=form,info=info)
+
 

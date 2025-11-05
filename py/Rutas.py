@@ -1,6 +1,7 @@
-from flask import render_template,Blueprint
+from flask import render_template,Blueprint,redirect
 from py.apis import Example,Equipo,Jugador,Responsable,Staff,Partido,Producto
 import base64
+from py.LyS import current_user,Usuario
 rutas = Blueprint('rutas', __name__,template_folder='templates')
 
 @rutas.route("/")
@@ -17,7 +18,6 @@ def Fixrute(sport="Deporte"):
     letters= list(sport)
     partidos=Partido.query.filter_by(Deporte=letters[0]).all()
     equipos=Equipo.query.all()
-    print(letters)
     return render_template('fixture.html',sport=sport,partidos=partidos,equipos=equipos)
 
 @rutas.route("/Add_Player")
@@ -47,9 +47,16 @@ def hell():
 def Create_Match():
     return render_template('Add/Add_Match.html')
 
-@rutas.route("/Add_Staff")
-def Create_Staff():
-    return render_template('Add/Add_Staff.html')
+@rutas.route("/staff/<string:error>")
+def Create_Staff(error):
+    if current_user.rango=="admin":
+        usuarios=Usuario.query.all()
+    if error=="error":
+        error="No se a encontro ningun usuario con ese mail"
+    else:
+        error=""
+    return render_template('Add/Add_Staff.html',usuarios=usuarios,error=error)
+    
 
 @rutas.route("/equipos")
 def Equipos():
