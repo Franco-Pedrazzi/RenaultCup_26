@@ -6,7 +6,7 @@ apis = Blueprint("apis", __name__)
 
 
 class Equipo(db.Model):
-    __tablename__ = "equipo"
+    __tablename__ = "Equipo"
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     Deporte = db.Column(db.String(10), default="-")
     Categoria = db.Column(db.String(10), default="-")

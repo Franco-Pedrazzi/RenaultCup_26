@@ -11,7 +11,7 @@ def Index():
 
 @rutas.route("/sponsors")
 def Sponsors():
-    return render_template('Sponsors.html')
+    return render_template('sponsors.html')
 
 @rutas.route("/fixtures/<string:sport>")
 def Fixrute(sport="Deporte"):
