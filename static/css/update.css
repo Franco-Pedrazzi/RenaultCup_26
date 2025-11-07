@@ -1,0 +1,60 @@
+/* --- update.css --- */
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa; /* gris suave */
+    margin: 0;
+    padding: 2rem;
+}
+
+/* Centrar el formulario */
+form {
+    max-width: 500px;
+    margin: 0 auto;
+    background-color: #fff;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Título */
+h1 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    text-transform: capitalize;
+}
+
+/* Campos de entrada */
+input[type="text"],
+input[type="file"] {
+    width: 100%;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+/* Botón */
+button {
+    width: 100%;
+    background-color: #ffcc00;
+    color: #000;
+    font-weight: bold;
+    border: none;
+    padding: 0.6rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+button:hover {
+    background-color: #ffd633;
+}
+
+/* Ajuste para dispositivos pequeños */
+@media (max-width: 600px) {
+    form {
+        padding: 1.2rem;
+    }
+}

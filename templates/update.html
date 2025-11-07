@@ -1,6 +1,19 @@
 {% extends "./base.html" %}
 
 {% block body %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/update.css') }}">
+
+
+</head>
+<body>
+    
 <form method="post" action="/update/{{objeto.__tablename__}}/{{objeto.id}}" enctype="multipart/form-data" >
     <H1>{{objeto.__tablename__}}</H1>
     {% for var_name in var_names %}
@@ -17,4 +30,7 @@
     <button type="submit">editar</button>
     
 </form>
+</body>
+</html>
+
 {% endblock %}

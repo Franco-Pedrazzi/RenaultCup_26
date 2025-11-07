@@ -2,6 +2,7 @@
 DROP DATABASE IF EXISTS Copa_Renault;
 CREATE DATABASE Copa_Renault;
 USE Copa_Renault;
+
 CREATE TABLE `usuario` (
   `Nombre` VARCHAR(40) not NULL,
   `Email` VARCHAR(40) not NULL,
@@ -109,5 +110,3 @@ ALTER TABLE `Partido` ADD FOREIGN KEY (Arbitro) REFERENCES `Staff` (`id`);
 ALTER TABLE `Partido` ADD FOREIGN KEY (Planillero) REFERENCES `Staff` (`id`);
 ALTER TABLE `Partido` ADD FOREIGN KEY (Equipo_1) REFERENCES `Equipo` (`id`);
 ALTER TABLE `Partido` ADD FOREIGN KEY (Equipo_2) REFERENCES `Equipo` (`id`);
-
-insert into usuario values ("FP","d48457362@alumnos.itr.edu.ar","scrypt:32768:8:1$eSwu93shQrd9G47h$fca6f7aee53c647e27720f9ec07d6cbe819f0960d3aacfa56f0dbd13dda6b025a4c1873d0b9000bea32daa95f9e82b3e44b2749117bca47f60dcfbbf3e6a9a94","admin");
